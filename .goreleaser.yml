@@ -1,0 +1,39 @@
+project_name: tailscale-ui
+
+builds:
+  - goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X github.com/muchobien/tailscale-ui.version={{ .Version }}
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}-v{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    files:
+      - assets/tailscale-ui.png
+      - assets/tailscale-ui.service
+
+nfpms:
+  - file_name_template: "{{ .ProjectName }}-v{{ .Version }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    homepage: "https://muchobien.dev"
+    maintainer: "Kevin López Cala <lokeon@muchobien.dev>"
+    description: "A Tailscale UI for Ubuntu."
+    license: MIT
+    formats:
+      - deb
+    dependencies:
+      - tailscale
+      - bash
+    contents:
+      - src: assets/tailscale-ui.png
+        dst: /usr/share/icons/hicolor/scalable/apps/tailscale-ui.png
+      - src: assets/tailscale-ui.service
+        dst: /usr/lib/systemd/user/tailscale-ui.service
+    scripts:
+      postinstall: "scripts/postinstall.sh"
+      postremove: "scripts/postremove.sh"
+
+checksum:
+  name_template: "{{ .ProjectName }}-v{{ .Version }}-checksums.txt"

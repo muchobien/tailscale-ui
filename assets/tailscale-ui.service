@@ -1,0 +1,10 @@
+[Unit]
+Description=Tailscale-UI
+
+[Service]
+ExecStart=/usr/local/bin/tailscale-ui
+Restart=on-failure
+SyslogIdentifier=tailscale-ui
+
+[Install]
+WantedBy=default.target
