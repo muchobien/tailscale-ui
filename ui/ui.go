@@ -110,7 +110,9 @@ func UI() {
 	if err == nil {
 		ui(status)
 		gtk.Main()
+		os.Exit(0)
+	} else {
+		os.Exit(1)
 	}
 
-	os.Exit(1)
 }
