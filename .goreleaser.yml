@@ -14,6 +14,7 @@ archives:
     files:
       - assets/tailscale-ui.png
       - assets/tailscale-ui.service
+      - assets/tailscale-ui-daemon.service
 
 nfpms:
   - file_name_template: "{{ .ProjectName }}-v{{ .Version }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
@@ -31,6 +32,8 @@ nfpms:
         dst: /usr/share/icons/hicolor/scalable/apps/tailscale-ui.png
       - src: assets/tailscale-ui.service
         dst: /usr/lib/systemd/user/tailscale-ui.service
+      - src: assets/tailscale-ui-daemon.service
+        dst: /etc/systemd/system/tailscale-ui-daemon.service
     scripts:
       postinstall: "scripts/postinstall.sh"
       postremove: "scripts/postremove.sh"

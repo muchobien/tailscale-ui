@@ -1,0 +1,11 @@
+[Unit]
+Description=Tailscale-UI Daemon
+After=tailscaled.service
+
+[Service]
+ExecStart=/usr/local/bin/tailscale-ui daemon
+Restart=on-failure
+SyslogIdentifier=tailscale-ui-daemon
+
+[Install]
+WantedBy=multi-user.target

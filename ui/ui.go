@@ -3,17 +3,20 @@ package ui
 import (
 	"context"
 	"fmt"
-	"os/exec"
+	"log"
+	"os"
 	"time"
 
 	"github.com/dawidd6/go-appindicator"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/muchobien/tailscale-ui/daemon"
 	"github.com/muchobien/tailscale-ui/utils"
+	"gopkg.in/retry.v1"
 	"tailscale.com/client/tailscale"
 	"tailscale.com/ipn/ipnstate"
 )
 
-func UI(st *ipnstate.Status) {
+func ui(st *ipnstate.Status) {
 	menu, err := gtk.MenuNew()
 	onError(err)
 
@@ -23,12 +26,15 @@ func UI(st *ipnstate.Status) {
 	separators := buildMenuItemSeparators(5)
 
 	connect.Connect("activate", func() {
-		exec.Command("sudo", "tailscale", "up").Start()
+		err := daemon.Connect()
+		onError(err)
 		disconnect.SetSensitive(true)
+		connect.SetSensitive(false)
 	})
 
 	disconnect.Connect("activate", func() {
-		exec.Command("sudo", "tailscale", "down").Start()
+		err := daemon.Disconnect()
+		onError(err)
 		connect.SetSensitive(true)
 		disconnect.SetSensitive(false)
 	})
@@ -73,4 +79,38 @@ func UI(st *ipnstate.Status) {
 			status.SetLabel(fmt.Sprintf("%s received | %s sent | %d link", utils.FmtByte(rxBytes), utils.FmtByte(txBytes), len(st.Peers())))
 		}
 	}()
+}
+
+func UI() {
+	gtk.Init(nil)
+	SetOnError(func(err error) {
+		if err != nil {
+			log.Fatalln(err)
+		}
+	})
+
+	ctx := context.Background()
+	strategy := retry.LimitTime(30*time.Second,
+		retry.Exponential{
+			Initial: 10 * time.Millisecond,
+			Factor:  1.5,
+		},
+	)
+
+	var status *ipnstate.Status
+	var err error
+
+	for a := retry.Start(strategy, nil); a.Next(); {
+		status, err = tailscale.Status(ctx)
+		if err == nil {
+			break
+		}
+	}
+
+	if err == nil {
+		ui(status)
+		gtk.Main()
+	}
+
+	os.Exit(1)
 }

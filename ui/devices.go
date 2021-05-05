@@ -41,6 +41,10 @@ func devices() *gtk.MenuItem {
 				grouped[peer.UserID] = append(grouped[peer.UserID], peer)
 			}
 
+			subMenuDevices.GetChildren().Foreach(func(item interface{}) {
+				subMenuDevices.Remove(item.(*gtk.Widget))
+			})
+
 			for user, items := range grouped {
 				userName, err := gtk.MenuItemNewWithLabel(status.User[user].DisplayName)
 				onError(err)
@@ -70,11 +74,11 @@ func devices() *gtk.MenuItem {
 				}
 				subMenuDevices.Add(userName)
 			}
-			subMenuDevices.ShowAll()
-
 			devices.SetSubmenu(subMenuDevices)
 
-			<-time.After(time.Second * 5)
+			subMenuDevices.ShowAll()
+
+			<-time.After(time.Minute)
 		}
 	}()
 
