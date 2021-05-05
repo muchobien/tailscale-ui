@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Tailscale UI
+GenericName=Tailscale UI
+Comment=An UI for Tailscale
+Exec=systemctl --user start tailscale-ui
+Icon=tailscale-appicon
+Terminal=false
+Type=Application
+Categories=GTK;System;

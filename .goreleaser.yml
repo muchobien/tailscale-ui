@@ -34,6 +34,10 @@ nfpms:
         dst: /usr/lib/systemd/user/tailscale-ui.service
       - src: assets/tailscale-ui-daemon.service
         dst: /etc/systemd/system/tailscale-ui-daemon.service
+      - src: assets/tailscale-appicon.png
+        dst: /usr/share/icons/hicolor/scalable/apps/tailscale-appicon.png
+      - src: assets/tailscale-ui.desktop
+        dst: /usr/share/applications/tailscale-ui.desktop
     scripts:
       postinstall: "scripts/postinstall.sh"
       postremove: "scripts/postremove.sh"
