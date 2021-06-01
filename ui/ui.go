@@ -23,7 +23,7 @@ func ui(st *ipnstate.Status) {
 	connect := connect()
 	status := status()
 	disconnect := disconnect()
-	separators := buildMenuItemSeparators(5)
+	separators := buildMenuItemSeparators(6)
 
 	connect.Connect("activate", func() {
 		err := daemon.Connect()
@@ -56,6 +56,8 @@ func ui(st *ipnstate.Status) {
 	menu.Add(separators[3])
 	menu.Add(devices())
 	menu.Add(separators[4])
+	menu.Add(nodes())
+	menu.Add(separators[5])
 	menu.Add(exit())
 	menu.ShowAll()
 
